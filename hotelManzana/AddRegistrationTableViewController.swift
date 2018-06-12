@@ -51,13 +51,26 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     }
 
     @IBAction func wifiSwitchChanged(_ sender: UISwitch) {
+        checkWifiValue()
+        updateDateViews()
+        updatePPrices()
+    }
+
+    func checkWifiValue () {
         if wifiSwitch.isOn {
             totalPriceWifi = numberOfNIghtsTotal * 10
             WiFiTotal.text = "Y     " + String(totalPriceWifi) + " $"
         } else {
             WiFiTotal.text = "N     0 $"
+            totalPriceWifi = 0
         }
     }
+
+    func updatePPrices () {
+        totalPrice = roomTypePrice + totalPriceWifi
+        totalServiceLabel.text = String(totalPrice) + " $"
+    }
+    
     func didSelect (roomType:RoomType) {
         self.roomType = roomType
         updateRoomType ()
@@ -68,6 +81,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
             roomTypeLabel.text = roomType.name
             roomTypePrice = roomType.price * numberOfNIghtsTotal
             roomTypePriceTotal.text = roomType.shortName + "     " + String (roomTypePrice) + " $"
+            updatePPrices()
         } else {
             roomTypeLabel.text = "Not Set"
         }
@@ -129,12 +143,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         let totalDays = Calendar.current.dateComponents([.day], from: checkInDateField.date, to: checkOutDateField.date)
         numberOfNIghtsTotal = (Int(totalDays.day!) + 1)
         numberOfNigths.text = String(numberOfNIghtsTotal)
-        print ("Room Price" + String(roomTypePrice))
-        print(totalPriceWifi)
-        totalPrice = roomTypePrice + totalPriceWifi
-        print (totalPrice)
-        totalServiceLabel.text = String(totalPrice) + " - $"
-        
+        updatePPrices()
     }
     
     @IBAction func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -169,6 +178,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         updateNUmberOfGuests()
         updateRoomType()
         updateDateViews()
+        checkWifiValue()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
